@@ -1,0 +1,19 @@
+{
+	"dockerComposeFile": "../docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "./root/app",
+	"extensions": [
+		"rebornix.ruby"
+	],
+	"settings": {
+		"editor.tabSize": 2,
+		"terminal.integrated.shell.linux": "/bin/bash",
+		"files.insertFinalNewline": true,
+		"files.trimFinalNewlines": true,
+		"files.trimTrailingWhitespace": true,
+		"[markdown]": {
+			"files.trimTrailingWhitespace": false
+		}
+	},
+	"shutdownAction": "stopCompose"
+}

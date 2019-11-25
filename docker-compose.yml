@@ -1,0 +1,10 @@
+version: '2'
+services:
+  app:
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - ~/.gitconfig:/root/.gitconfig
+    tty: true
+    stdin_open: true
