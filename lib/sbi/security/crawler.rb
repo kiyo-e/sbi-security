@@ -19,7 +19,8 @@ module Sbi::Security
     def portfolio
       find("img[title='ポートフォリオ']").click
 
-      stocks = all(:xpath, '//table[@width="100%"]/tbody/tr[@align="center"]').drop(1).each_with_index.map do |tr, i|
+      stocks = all(:xpath, '//table[@width="100%"]/tbody/tr[@align="center"]')
+               .select { |tr| tr.text.include? "詳細" }.each_with_index.map do |tr, i|
         _, code_and_name, _, count, value, price, price_ratio, price_ratio_percentage, profit, profit_percentage,
           total_value = tr.all("td").map { |td| td.text.gsub(/,/, "") }
 
@@ -31,8 +32,8 @@ module Sbi::Security
           price: price,
           price_ratio: empty_string_to_num(price_ratio).to_i,
           price_ratio_percentage: empty_string_to_num(price_ratio_percentage).to_f,
-          profit: profit,
-          profit_percentage: profit_percentage,
+          profit: empty_string_to_num(profit).to_i,
+          profit_percentage: empty_string_to_num(profit_percentage).to_f,
           total_value: total_value
         )
       end
