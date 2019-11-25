@@ -21,8 +21,15 @@ module Sbi::Security
 
       stocks = all(:xpath, '//table[@width="100%"]/tbody/tr[@align="center"]')
                .select { |tr| tr.text.include? "詳細" }.each_with_index.map do |tr, i|
-        _, code_and_name, _, count, value, price, price_ratio, price_ratio_percentage, profit, profit_percentage,
-          total_value = tr.all("td").map { |td| td.text.gsub(/,/, "") }
+
+                if tr.all(:css, "td").count == 14
+                  _, code_and_name, type, expire_date, _, count, value, price, price_ratio, price_ratio_percentage, profit, profit_percentage,
+                  total_value = tr.all("td").map { |td| td.text.gsub(/,/, "") }
+                else
+                  _, code_and_name, _, count, value, price, price_ratio, price_ratio_percentage, profit, profit_percentage,
+                  total_value = tr.all("td").map { |td| td.text.gsub(/,/, "") }
+                end
+
 
         PortfolioStock.new(
           code: code_and_name.split(" ").first,
@@ -101,6 +108,10 @@ module Sbi::Security
 
     def empty_string_to_num(string)
       string == "--" ? nil : string
+    end
+
+    def is_margin_trade?(tr)
+
     end
   end
 end
