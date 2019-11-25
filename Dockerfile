@@ -34,16 +34,18 @@ RUN apt-get -y --no-install-recommends install \
   xdg-utils \
   apt-transport-https \
   git
-  
+
 RUN curl -O https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 RUN dpkg -i google-chrome-stable_current_amd64.deb
 
 RUN apt-get clean && \
     apt-get autoclean && \
-    apt-get -y autoremove 
+    apt-get -y autoremove
 
 COPY . /root/app
 
 WORKDIR /root/app
 
 RUN bundle install
+
+RUN bundle exec rake webdrivers:chromedriver:update
