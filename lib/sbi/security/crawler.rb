@@ -2,7 +2,7 @@ module Sbi::Security
   class Crawler
     include Capybara::DSL
 
-    TOP_PAGE = "https://www.sbisec.co.jp/ETGate"
+    TOP_PAGE = "https://site1.sbisec.co.jp/ETGate"
 
     Capybara.register_driver :headless_chromium do |app|
       options = { args: %w{headless no-sandbox disable-gpu} }
@@ -49,10 +49,30 @@ module Sbi::Security
       Portfolio.new(stocks)
     end
 
-    def stock(code)
-      find(:xpath, "//input[@id='top_stock_sec']").set code
-      find("img[title='株価検索']").click
+    def stocks(codes)
+      @tabs = {} if @tabs.nil?
+      Array(codes).inject({}) do |a, e|
+        if @tabs[e]
+          puts "tab changing"
+          page.driver.browser.switch_to.window @tabs[e]
+          puts "tab changed"
+        else
+          puts "new window opening"
+          page.open_new_window
+          @tabs[e] = page.driver.browser.window_handles.last
+          page.driver.browser.switch_to.window @tabs[e]
+          visit TOP_PAGE
+          find(:xpath, "//input[@id='top_stock_sec']").set e
+          find("img[title='株価検索']").click
+          puts "new window opened"
+        end
 
+        a[e] = stock(e)
+        a
+      end
+    end
+
+    def stock(code)
       begin
         # SBI security has XHR for fetching information. Need to wait until page finish to emulate JavaScript.
         loop do
