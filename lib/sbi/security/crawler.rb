@@ -22,7 +22,7 @@ module Sbi::Security
       stocks = all(:xpath, '//table[@width="100%"]/tbody/tr[@align="center"]')
                .select { |tr| tr.text.include? "詳細" }.each_with_index.map do |tr, i|
 
-                if tr.all(:css, "td").count == 14
+                if is_margin_trade?(tr)
                   _, code_and_name, type, expire_date, _, count, value, price, price_ratio, price_ratio_percentage, profit, profit_percentage,
                   total_value = tr.all("td").map { |td| td.text.gsub(/,/, "") }
                 else
@@ -111,7 +111,7 @@ module Sbi::Security
     end
 
     def is_margin_trade?(tr)
-
+      tr.all(:css, "td").count == 14
     end
   end
 end
