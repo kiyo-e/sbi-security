@@ -3,8 +3,8 @@ FROM ruby:2.6.5-slim
 ENV LANG C.UTF-8
 ENV DEBIAN_FRONTEND noninteractive
 ENV BUNDLE_PATH /bundle
-ENV SBI_SECURITY_USER_ID="" 
-ENV SBI_SECURITY_PASSWORD="" 
+ENV SBI_SECURITY_USER_ID=""
+ENV SBI_SECURITY_PASSWORD=""
 
 # set locale and timezone
 RUN apt-get update -qq && \
@@ -48,7 +48,7 @@ COPY . /root/app
 
 WORKDIR /root/app
 
-RUN bundle install
+RUN bundle install -j4
 
 RUN bundle exec rake webdrivers:chromedriver:update[2.35]
 
