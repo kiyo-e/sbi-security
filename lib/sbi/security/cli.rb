@@ -36,5 +36,10 @@ module Sbi::Security
 
       "#{stock_table}\n\n#{order_book_table}"
     end
+
+    def buy(code:, quantity:, price: )
+      @client.buy(code: code, quantity: quantity, price: price)
+    end
+
   end
 end

@@ -13,6 +13,7 @@ module Sbi::Security
     Capybara.default_driver = :headless_chromium
 
     def initialize(user_id, password)
+      @password = password
       login(user_id, password)
     end
 
@@ -95,6 +96,20 @@ module Sbi::Security
       rescue Selenium::WebDriver::Error::StaleElementReferenceError
         retry
       end
+    end
+
+    def buy(code:, quantity:, price: )
+      find("img[title='取引']").click
+
+      find("#genK").click
+      find("#shouryaku").click
+
+      fill_in :stock_sec_code, with: code
+      fill_in :input_quantity, with: quantity
+      fill_in :input_price, with: price
+      fill_in :trade_pwd, with: @password
+
+      find("img[title='注文発注']").click
     end
 
     private
