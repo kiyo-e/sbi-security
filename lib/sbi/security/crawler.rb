@@ -15,6 +15,7 @@ module Sbi::Security
     def initialize(user_id, password)
       @password = password
       login(user_id, password)
+      @tabs = { "top": last_opend_tab_id }
     end
 
     def portfolio
@@ -50,21 +51,16 @@ module Sbi::Security
     end
 
     def stocks(codes)
-      @tabs = {} if @tabs.nil?
       Array(codes).inject({}) do |a, e|
         if @tabs[e]
-          puts "tab changing"
           page.driver.browser.switch_to.window @tabs[e]
-          puts "tab changed"
         else
-          puts "new window opening"
           page.open_new_window
           @tabs[e] = page.driver.browser.window_handles.last
           page.driver.browser.switch_to.window @tabs[e]
           visit TOP_PAGE
           find(:xpath, "//input[@id='top_stock_sec']").set e
           find("img[title='株価検索']").click
-          puts "new window opened"
         end
 
         a[e] = stock(e)
@@ -132,6 +128,12 @@ module Sbi::Security
       find("img[title='注文発注']").click
     end
 
+    def logined?
+      page.driver.browser.switch_to.window @tabs[:top]
+      visit TOP_PAGE
+      !page.has_css?("#user_input")
+    end
+
     private
 
     def login(user_id, password)
@@ -147,6 +149,10 @@ module Sbi::Security
 
     def is_margin_trade?(tr)
       tr.all(:css, "td").count == 14
+    end
+
+    def last_opend_tab_id
+      page.driver.browser.window_handles.last
     end
   end
 end
