@@ -22,15 +22,15 @@ module Sbi::Security
       find("img[title='ポートフォリオ']").click
 
       stocks = all(:xpath, '//table[@width="100%"]/tbody/tr[@align="center"]')
-               .select { |tr| tr.text.include? "詳細" }.each_with_index.map do |tr, i|
+      .select { |tr| tr.text.include? "詳細" }.each_with_index.map do |tr, i|
 
-                if is_margin_trade?(tr)
-                  _, code_and_name, type, expire_date, _, count, value, price, price_ratio, price_ratio_percentage, profit, profit_percentage,
-                  total_value = tr.all("td").map { |td| td.text.gsub(/,/, "") }
-                else
-                  _, code_and_name, _, count, value, price, price_ratio, price_ratio_percentage, profit, profit_percentage,
-                  total_value = tr.all("td").map { |td| td.text.gsub(/,/, "") }
-                end
+        if is_margin_trade?(tr)
+          _, code_and_name, type, expire_date, _, count, value, price, price_ratio, price_ratio_percentage, profit, profit_percentage,
+          total_value = tr.all("td").map { |td| td.text.gsub(/,/, "") }
+        else
+          _, code_and_name, _, count, value, price, price_ratio, price_ratio_percentage, profit, profit_percentage,
+          total_value = tr.all("td").map { |td| td.text.gsub(/,/, "") }
+        end
 
 
         PortfolioStock.new(
@@ -115,7 +115,9 @@ module Sbi::Security
     end
 
     def buy(code:, quantity:, price: )
-      find("img[title='取引']").click
+      switch_or_open_tab(:trade) do
+        find("img[title='取引']").click
+      end
 
       find("#genK").click
       find("#shouryaku").click
@@ -124,6 +126,24 @@ module Sbi::Security
       fill_in :input_quantity, with: quantity
       fill_in :input_price, with: price
       fill_in :trade_pwd, with: @password
+
+      find("img[title='注文発注']").click
+    end
+
+    def margin_sell(code:, quantity:, price:, kubun: "制度")
+      switch_or_open_tab(:trade) do
+        find("img[title='取引']").click
+      end
+
+      find("#shinU").click
+      find("#shouryaku").click
+
+      fill_in :stock_sec_code, with: code
+      fill_in :input_quantity, with: quantity
+      fill_in :input_price, with: price
+      fill_in :trade_pwd, with: @password
+
+      choose kubun
 
       find("img[title='注文発注']").click
     end
@@ -153,6 +173,21 @@ module Sbi::Security
 
     def last_opend_tab_id
       page.driver.browser.window_handles.last
+    end
+
+    def switch_or_open_tab(name)
+      if @tabs[name]
+        page.driver.browser.switch_to.window @tabs[name]
+      else
+        page.open_new_window
+        @tabs[name] = page.driver.browser.window_handles.last
+        page.driver.browser.switch_to.window @tabs[name]
+        visit TOP_PAGE
+      end
+
+      if block_given?
+        yield
+      end
     end
   end
 end
