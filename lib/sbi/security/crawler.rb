@@ -148,16 +148,24 @@ module Sbi::Security
       fill_in :trade_pwd, with: @password
 
       if price
-      fill_in :input_price, with: price
+        fill_in :input_price, with: price
       else
         choose "成行", match: :first
       end
 
-
-
       choose kubun
 
       find("img[title='注文発注']").click
+    end
+
+    def general_margin_sell_stocks
+      find("img[title='国内株式']").click
+      click_link "一般信用売り銘柄一覧"
+      click_link "12月"
+      all("table.md-l-utl-mt10 tbody tr").map do |tr|
+        _, code, name, _, quantity, _, _, _, _, _, _, _ = tr.all(:xpath, "./td").map(&:text)
+        MarginStock.new(code: code, name: name, quantity: quantity)
+      end
     end
 
     def logined?
