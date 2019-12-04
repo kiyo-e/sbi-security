@@ -114,7 +114,7 @@ module Sbi::Security
       end
     end
 
-    def buy(code:, quantity:, price: )
+    def buy(code:, quantity:, price: nil)
       switch_or_open_tab(:trade) do
         find("img[title='取引']").click
       end
@@ -124,13 +124,18 @@ module Sbi::Security
 
       fill_in :stock_sec_code, with: code
       fill_in :input_quantity, with: quantity
-      fill_in :input_price, with: price
       fill_in :trade_pwd, with: @password
+
+      if price
+        fill_in :input_price, with: price
+      else
+        choose "成行", match: :first
+      end
 
       find("img[title='注文発注']").click
     end
 
-    def margin_sell(code:, quantity:, price:, kubun: "制度")
+    def margin_sell(code:, quantity:, price: nil, kubun: "制度")
       switch_or_open_tab(:trade) do
         find("img[title='取引']").click
       end
@@ -140,8 +145,15 @@ module Sbi::Security
 
       fill_in :stock_sec_code, with: code
       fill_in :input_quantity, with: quantity
-      fill_in :input_price, with: price
       fill_in :trade_pwd, with: @password
+
+      if price
+      fill_in :input_price, with: price
+      else
+        choose "成行", match: :first
+      end
+
+
 
       choose kubun
 
