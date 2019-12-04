@@ -12,7 +12,7 @@ module Sbi::Security
       crawler.stock(code)
     end
 
-    def buy(code:, quantity:, price: )
+    def buy(code:, quantity:, price: nil)
       crawler.buy(code: code, quantity: quantity, price: price)
     end
 
