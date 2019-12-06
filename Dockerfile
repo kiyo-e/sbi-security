@@ -35,10 +35,9 @@ RUN apt-get -y --no-install-recommends install \
   lsb-release \
   xdg-utils \
   apt-transport-https \
-  git
-
-RUN curl -O https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-RUN dpkg -i google-chrome-stable_current_amd64.deb
+  git \
+  chromium \
+  chromium-driver
 
 RUN apt-get clean && \
     apt-get autoclean && \
@@ -49,7 +48,3 @@ COPY . /root/app
 WORKDIR /root/app
 
 RUN bundle install -j4
-
-RUN bundle exec rake webdrivers:chromedriver:update
-
-ENV PATH $PATH:/root/.webdrivers/
