@@ -163,6 +163,9 @@ module Sbi::Security
         find("img[title='国内株式']").click
         click_link "一般信用売り銘柄一覧"
         click_link "12月"
+        within find(:xpath, "/HTML/BODY[1]/TABLE[1]/TBODY[1]/TR[1]/TD[1]/FORM[1]/DIV[1]/DIV[2]/DIV[2]") do
+          click_link "200件" if has_link?('200件')
+        end
       end
 
       all("table.md-l-utl-mt10 tbody tr").map do |tr|
