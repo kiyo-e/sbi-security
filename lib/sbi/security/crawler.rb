@@ -5,7 +5,7 @@ module Sbi::Security
     TOP_PAGE = "https://site1.sbisec.co.jp/ETGate"
 
     Capybara.register_driver :headless_chromium do |app|
-      options = { args: %w{headless no-sandbox disable-gpu} }
+      options = { args: %w{headless disable-features=VizDisplayCompositor} }
       caps = Selenium::WebDriver::Remote::Capabilities.chrome(chromeOptions: options)
       Capybara::Selenium::Driver.new(app, browser: :chrome, desired_capabilities: caps)
     end

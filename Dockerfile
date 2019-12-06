@@ -50,6 +50,6 @@ WORKDIR /root/app
 
 RUN bundle install -j4
 
-RUN bundle exec rake webdrivers:chromedriver:update[2.35]
+RUN bundle exec rake webdrivers:chromedriver:update
 
 ENV PATH $PATH:/root/.webdrivers/
